@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import errorMiddleware from './middlewares/error'
-import parseHitDiceMiddleware from './middlewares/parse-hit-dice'
+import setHitDiceExpressionsFromQueryMiddleware from './middlewares/set-hit-dice-expressions-from-query'
 import calculateResults from './util/calculate-hit-points'
 import parseHitDice from './util/parse-hit-dice-expression-string'
 
@@ -23,11 +23,11 @@ function processHitDice(expressions: string[]) {
   })
 }
 
-app.get('/', parseHitDiceMiddleware, (c) => {
+app.get('/', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   return c.json(processHitDice(c.get('hitDiceExpressions')))
 })
 
-app.get('/csv', parseHitDiceMiddleware, (c) => {
+app.get('/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   const expressions = c.get('hitDiceExpressions')
   let csvResponse = 'hitDice,minimum,weak,average,strong,maximum'
 

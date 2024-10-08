@@ -1,4 +1,4 @@
-import type { DiceCount, DieType, Modifier } from '../types'
+import type { DiceCount, DieType, HitPointResults, Modifier } from '../types'
 import getDieAverage from './get-die-average'
 
 function calculateMiddle(a: number, b: number): number {
@@ -10,17 +10,17 @@ function calculateMinimum(diceCount: DiceCount, modifier: Modifier): number {
   return minimum >= 1 ? minimum : 1
 }
 
-export function calculateResults(diceCount: DiceCount, dieType: DieType, modifier: Modifier) {
+export default function calculateResults(diceCount: DiceCount, dieType: DieType, modifier: Modifier): HitPointResults {
   if (Number.isNaN(diceCount) || Number.isNaN(dieType) || diceCount <= 0 || dieType <= 0) {
-    throw new Error('Die type and number of dice must be positive integers.')
+    throw new Error('🎲 Die type and number of dice must be positive integers.')
   }
 
   if (Number.isNaN(diceCount) || diceCount <= 0) {
-    throw new Error('Dice count number must be a positive integer')
+    throw new Error('🎲 Dice count number must be a positive integer')
   }
 
   if (Number.isNaN(modifier)) {
-    throw new TypeError('Modifier number must be an integer')
+    throw new TypeError('🎲 Modifier number must be an integer')
   }
 
   const minimum = calculateMinimum(diceCount, modifier)

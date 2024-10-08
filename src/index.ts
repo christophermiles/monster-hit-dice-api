@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
-import { createMiddleware } from 'hono/factory'
 import { logger } from 'hono/logger'
+import errorMiddleware from './middlewares/error'
+import parseHitDiceMiddleware from './middlewares/parse-hit-dice'
 import calculateResults from './util/calculate-hit-points'
 import parseHitDice from './util/parse-hit-dice-expression-string'
 
@@ -10,33 +11,7 @@ interface Variables {
 
 const app = new Hono<{ Variables: Variables }>()
 app.use(logger())
-
-const parseHitDiceMiddleware = createMiddleware(async (c, next) => {
-  const hds = c.req.queries('hd')
-
-  if (!hds?.length) {
-    throw new TypeError('🎲 No Hit Dice expression was provided')
-  }
-
-  c.set('hitDiceExpressions', hds.map((queryString: string) => {
-    return queryString.replace(/\s/g, '+') // Handle + character in modifier (assumes browser has replaced with space))
-  }))
-
-  await next()
-})
-
-// Middleware for error handling
-app.use('*', async (c, next) => {
-  try {
-    await next()
-  }
-  catch (error: any) {
-    return c.json({
-      error: error.message,
-      status: 400,
-    }, 400)
-  }
-})
+app.use('*', errorMiddleware)
 
 function processHitDice(expressions: string[]) {
   return expressions.map((expression) => {

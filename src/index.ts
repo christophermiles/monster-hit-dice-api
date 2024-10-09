@@ -1,5 +1,6 @@
 import type { HitPointResults } from 'roll-hit-dice/dist/types'
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { apiReference } from '@scalar/hono-api-reference'
 import { logger } from 'hono/logger'
 import rollHitDice from 'roll-hit-dice/dist/roll-hit-dice'
 import errorMiddleware from './middlewares/error'
@@ -11,23 +12,17 @@ interface Variables {
   hitDiceExpressions: string[]
 }
 
+type HitPointResultsResponse = [string, HitPointResults][]
+
 const app = new OpenAPIHono<{ Variables: Variables }>()
 app.use(logger())
 app.use('*', errorMiddleware)
 
-function processHitDice(expressions: string[]): HitPointResultsResponse[] {
+function processHitDice(expressions: string[]): HitPointResultsResponse {
   return expressions.map((expression) => {
     const parsedHitDice = parseHitDice(expression)
-    return {
-      hitDice: expression,
-      hitPointResults: rollHitDice(parsedHitDice.diceCount, parsedHitDice.dieType, parsedHitDice.modifier),
-    }
+    return [expression, rollHitDice(parsedHitDice.diceCount, parsedHitDice.dieType, parsedHitDice.modifier)]
   })
-}
-
-interface HitPointResultsResponse {
-  hitDice: string
-  hitPointResults: HitPointResults
 }
 
 const indexRoute = createRoute({
@@ -50,15 +45,19 @@ const indexRoute = createRoute({
 })
 
 app.openapi(indexRoute, (c) => {
-  return c.json(processHitDice(c.get('hitDiceExpressions')))
+  const response: [string, HitPointResults][] = []
+  processHitDice(c.get('hitDiceExpressions')).forEach((result) => {
+    response.push([result[0], result[1]])
+  })
+  return c.json(response)
 })
 
 app.get('/hp/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   const expressions = c.get('hitDiceExpressions')
   let csvResponse = 'hitDice,minimum,weak,average,strong,maximum'
 
-  processHitDice(expressions).forEach(({ hitDice, hitPointResults }) => {
-    csvResponse += `\n${hitDice},${hitPointResults.minimum},${hitPointResults.weak},${hitPointResults.average},${hitPointResults.strong},${hitPointResults.maximum}`
+  processHitDice(expressions).forEach((result) => {
+    csvResponse += `\n${result[0]},${result[1].minimum},${result[1].weak},${result[1].average},${result[1].strong},${result[1].maximum}`
   })
 
   return c.text(csvResponse, 200, { 'Content-Type': 'text/csv; charset=utf-8' })
@@ -71,5 +70,11 @@ app.doc('/doc', {
     title: 'Hit Point Range API',
   },
 })
+
+app.get('/reference', apiReference({
+  spec: {
+    url: '/doc',
+  },
+}))
 
 export default app

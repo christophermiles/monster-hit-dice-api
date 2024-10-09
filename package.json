@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hono/zod-openapi": "^0.16.4",
+    "@scalar/hono-api-reference": "^0.5.152",
     "hono": "^4.6.3",
     "roll-hit-dice": "^1.0.0-alpha.2",
     "zod": "^3.23.8"

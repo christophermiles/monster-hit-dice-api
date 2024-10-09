@@ -1,9 +1,10 @@
 import type { HitPointResults } from 'roll-hit-dice/dist/types'
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { logger } from 'hono/logger'
 import rollHitDice from 'roll-hit-dice/dist/roll-hit-dice'
 import errorMiddleware from './middlewares/error'
 import setHitDiceExpressionsFromQueryMiddleware from './middlewares/set-hit-dice-expressions-from-query'
+import { HitDiceQuerySchema, HitPointsResponseSchema } from './schemas'
 import parseHitDice from './util/parse-hit-dice-expression-string'
 
 interface Variables {
@@ -23,32 +24,6 @@ function processHitDice(expressions: string[]): HitPointResultsResponse[] {
     }
   })
 }
-
-const HitDiceQuerySchema = z.object({
-  hd: z.preprocess((arg) => {
-    if (typeof arg === 'string') {
-      return [arg]
-    }
-    return arg
-  }, z.array(z.string())).openapi({
-    param: {
-      name: 'hd',
-      in: 'query',
-    },
-    example: ['2d8+8'],
-  }),
-})
-
-const HitPointsResponseSchema = z.array(z.object({
-  hitDice: z.string(),
-  hitPointResults: z.object({
-    minimum: z.number(),
-    weak: z.number(),
-    average: z.number(),
-    strong: z.number(),
-    maximum: z.number(),
-  }),
-}))
 
 interface HitPointResultsResponse {
   hitDice: string

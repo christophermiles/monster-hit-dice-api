@@ -1,19 +1,20 @@
-import { Hono } from 'hono'
+import type { HitPointResults } from 'roll-hit-dice/dist/types'
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { logger } from 'hono/logger'
+import rollHitDice from 'roll-hit-dice/dist/roll-hit-dice'
 import errorMiddleware from './middlewares/error'
 import setHitDiceExpressionsFromQueryMiddleware from './middlewares/set-hit-dice-expressions-from-query'
 import parseHitDice from './util/parse-hit-dice-expression-string'
-import rollHitDice from "roll-hit-dice/dist/roll-hit-dice";
 
 interface Variables {
   hitDiceExpressions: string[]
 }
 
-const app = new Hono<{ Variables: Variables }>()
+const app = new OpenAPIHono<{ Variables: Variables }>()
 app.use(logger())
 app.use('*', errorMiddleware)
 
-function processHitDice(expressions: string[]) {
+function processHitDice(expressions: string[]): HitPointResultsResponse[] {
   return expressions.map((expression) => {
     const parsedHitDice = parseHitDice(expression)
     return {
@@ -23,11 +24,61 @@ function processHitDice(expressions: string[]) {
   })
 }
 
-app.get('/', setHitDiceExpressionsFromQueryMiddleware, (c) => {
+const HitDiceQuerySchema = z.object({
+  hd: z.preprocess((arg) => {
+    if (typeof arg === 'string') {
+      return [arg]
+    }
+    return arg
+  }, z.array(z.string())).openapi({
+    param: {
+      name: 'hd',
+      in: 'query',
+    },
+    example: ['2d8+8'],
+  }),
+})
+
+const HitPointsResponseSchema = z.array(z.object({
+  hitDice: z.string(),
+  hitPointResults: z.object({
+    minimum: z.number(),
+    weak: z.number(),
+    average: z.number(),
+    strong: z.number(),
+    maximum: z.number(),
+  }),
+}))
+
+interface HitPointResultsResponse {
+  hitDice: string
+  hitPointResults: HitPointResults
+}
+
+const indexRoute = createRoute({
+  method: 'get',
+  path: '/hp',
+  request: {
+    query: HitDiceQuerySchema,
+  },
+  middleware: setHitDiceExpressionsFromQueryMiddleware,
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: HitPointsResponseSchema,
+        },
+      },
+      description: 'Retrieve Hit Point results from Hit Dice expressions',
+    },
+  },
+})
+
+app.openapi(indexRoute, (c) => {
   return c.json(processHitDice(c.get('hitDiceExpressions')))
 })
 
-app.get('/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
+app.get('/hp/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   const expressions = c.get('hitDiceExpressions')
   let csvResponse = 'hitDice,minimum,weak,average,strong,maximum'
 
@@ -36,6 +87,14 @@ app.get('/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   })
 
   return c.text(csvResponse, 200, { 'Content-Type': 'text/csv; charset=utf-8' })
+})
+
+app.doc('/doc', {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'Hit Point Range API',
+  },
 })
 
 export default app

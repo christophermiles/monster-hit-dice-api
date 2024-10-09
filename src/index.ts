@@ -54,7 +54,7 @@ app.openapi(indexRoute, (c) => {
 
 app.get('/hp/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
   const expressions = c.get('hitDiceExpressions')
-  let csvResponse = 'hitDice,minimum,weak,average,strong,maximum'
+  let csvResponse = 'Hit Dice,Minimum,Weak,Average,Strong,Maximum'
 
   processHitDice(expressions).forEach((result) => {
     csvResponse += `\n${result[0]},${result[1].minimum},${result[1].weak},${result[1].average},${result[1].strong},${result[1].maximum}`

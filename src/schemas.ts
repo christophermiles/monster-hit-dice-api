@@ -21,15 +21,13 @@ export const HitDiceQuerySchema = z.object({
   }),
 })
 
-export const HitPointResultsSchema = z.object({
-  minimum: z.number(),
-  weak: z.number(),
-  average: z.number(),
-  strong: z.number(),
-  maximum: z.number(),
-})
-
 export const HitPointsResponseSchema = z.array(z.tuple([
-  z.string().regex(HIT_DICE_REGEX),
-  HitPointResultsSchema,
+  z.string(),
+  z.object({
+    minimum: z.number(),
+    weak: z.number(),
+    average: z.number(),
+    strong: z.number(),
+    maximum: z.number(),
+  }),
 ]))

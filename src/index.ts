@@ -1,50 +1,37 @@
+import type { Context } from 'hono'
 import type { HitPointResults } from 'roll-hit-dice/dist/types'
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import { logger } from 'hono/logger'
-import rollHitDice from 'roll-hit-dice/dist/roll-hit-dice'
 import errorMiddleware from './middlewares/error'
 import setHitDiceExpressionsFromQueryMiddleware from './middlewares/set-hit-dice-expressions-from-query'
-import { HitDiceQuerySchema, HitPointsResponseSchema } from './schemas'
-import parseHitDice from './util/parse-hit-dice-expression-string'
+import { getHitPointsRoute } from './routes/get-hit-points'
+import { HitDiceQuerySchema } from './schemas'
+import { processHitDice } from './util/process-hit-dice'
 
 interface Variables {
   hitDiceExpressions: string[]
 }
 
-type HitPointResultsResponse = [string, HitPointResults][]
-
 const app = new OpenAPIHono<{ Variables: Variables }>()
 app.use(logger())
 app.use('*', errorMiddleware)
 
-function processHitDice(expressions: string[]): HitPointResultsResponse {
-  return expressions.map((expression) => {
-    const parsedHitDice = parseHitDice(expression)
-    return [expression, rollHitDice(parsedHitDice.diceCount, parsedHitDice.dieType, parsedHitDice.modifier)]
-  })
-}
-
-const indexRoute = createRoute({
-  method: 'get',
-  path: '/hp',
-  request: {
-    query: HitDiceQuerySchema,
-  },
-  middleware: setHitDiceExpressionsFromQueryMiddleware,
-  responses: {
-    200: {
-      content: {
-        'application/json': {
-          schema: HitPointsResponseSchema,
-        },
-      },
-      description: 'Retrieve Hit Point results from Hit Dice expressions',
-    },
+app.doc('/doc', {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'Roll Hit Dice API',
   },
 })
 
-app.openapi(indexRoute, (c) => {
+app.get('/', apiReference({
+  spec: {
+    url: '/doc',
+  },
+}))
+
+app.openapi(getHitPointsRoute, (c: Context) => {
   const response: [string, HitPointResults][] = []
   processHitDice(c.get('hitDiceExpressions')).forEach((result) => {
     response.push([result[0], result[1]])
@@ -52,7 +39,24 @@ app.openapi(indexRoute, (c) => {
   return c.json(response)
 })
 
-app.get('/hp/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
+app.openapi(createRoute({
+  method: 'get',
+  path: '/hp/csv',
+  request: {
+    query: HitDiceQuerySchema,
+  },
+  middleware: setHitDiceExpressionsFromQueryMiddleware,
+  responses: {
+    200: {
+      content: {
+        'text/csv': {
+          schema: z.string(),
+        },
+      },
+      description: 'Retrieve Hit Point results from Hit Dice expressions as comma-separated values',
+    },
+  },
+}), (c) => {
   const expressions = c.get('hitDiceExpressions')
   let csvResponse = 'Hit Dice,Minimum,Weak,Average,Strong,Maximum'
 
@@ -62,19 +66,5 @@ app.get('/hp/csv', setHitDiceExpressionsFromQueryMiddleware, (c) => {
 
   return c.text(csvResponse, 200, { 'Content-Type': 'text/csv; charset=utf-8' })
 })
-
-app.doc('/doc', {
-  openapi: '3.0.0',
-  info: {
-    version: '1.0.0',
-    title: 'Hit Point Range API',
-  },
-})
-
-app.get('/reference', apiReference({
-  spec: {
-    url: '/doc',
-  },
-}))
 
 export default app

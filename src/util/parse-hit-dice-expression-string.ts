@@ -1,4 +1,4 @@
-import type { DiceCount, DieType, Modifier } from '../types'
+import type { DiceCount, DieType, Modifier } from 'roll-hit-dice/dist/types'
 
 export default function parseHitDice(expression: string): {
   diceCount: DiceCount

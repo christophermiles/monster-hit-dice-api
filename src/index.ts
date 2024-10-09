@@ -2,8 +2,8 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import errorMiddleware from './middlewares/error'
 import setHitDiceExpressionsFromQueryMiddleware from './middlewares/set-hit-dice-expressions-from-query'
-import calculateResults from './util/calculate-hit-points'
 import parseHitDice from './util/parse-hit-dice-expression-string'
+import rollHitDice from "roll-hit-dice/dist/roll-hit-dice";
 
 interface Variables {
   hitDiceExpressions: string[]
@@ -18,7 +18,7 @@ function processHitDice(expressions: string[]) {
     const parsedHitDice = parseHitDice(expression)
     return {
       hitDice: expression,
-      hitPointResults: calculateResults(parsedHitDice.diceCount, parsedHitDice.dieType, parsedHitDice.modifier),
+      hitPointResults: rollHitDice(parsedHitDice.diceCount, parsedHitDice.dieType, parsedHitDice.modifier),
     }
   })
 }

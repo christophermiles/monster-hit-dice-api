@@ -10,7 +10,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "hono": "^4.6.3"
+    "hono": "^4.6.3",
+    "roll-hit-dice": "^1.0.0-alpha.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.7.3",

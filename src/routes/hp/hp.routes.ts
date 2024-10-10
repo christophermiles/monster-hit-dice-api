@@ -43,7 +43,7 @@ export const getHitPointsAsCsvRoute = createRoute({
       content: {
         'text/plain': {
           schema: z.string(),
-          example: hitPointResultsResponseAsCsv(HIT_POINT_RESULTS_MOCKS),
+          example: hitPointResultsResponseAsCsv([HIT_POINT_RESULTS_MOCKS[0]]),
         },
       },
       description: 'Retrieve Hit Point results from Hit Dice expressions as comma-separated values',

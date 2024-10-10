@@ -45,12 +45,12 @@ app.doc('/doc', {
       'See the documentation for the individual endpoints for more details.'].join('\n\n'),
     contact: {
       name: "Christopher Miles",
-      url: "http://christophermiles.com.au",
+      url: "https://github.com/christophermiles/hit-dice-app-api",
       email: "mail@christophermiles.com.au"
     },
     license: {
       name: 'MIT',
-      url: 'https://opensource.org/license/mit'
+      url: 'https://github.com/christophermiles/hit-dice-app-api/blob/main/LICENSE'
     }
   },
 })

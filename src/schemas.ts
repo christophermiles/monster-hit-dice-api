@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 import { HIT_DICE_REGEX } from './constants'
-import { HIT_POINT_RESULTS_MOCKS } from './mocks'
+import {HIT_DICE_BY_MONSTER, HIT_POINT_RESULTS_MOCKS} from "./mocks";
 
 export const HitDiceQuerySchema = z.object({
   hd: z.preprocess((arg) => {
@@ -17,19 +17,21 @@ export const HitDiceQuerySchema = z.object({
     param: {
       name: 'hd',
       in: 'query',
-      description: 'One or more Hit Dice expressions, eg: `?hd=2d8-2` or `?hd=2d8-2&hd=2d8+6&hd=8d10+40&hd=33d20+330` \n\nNote: the application will decode `+` symbols that have been URL-encoded as `%2B`.',
+      description: 'One or more Hit Dice expressions, eg: `?hd=2d6` or `?hd=2d6&hd=2d8-2&hd=2d8+6&hd=8d10+40&hd=33d20+330`.'
     },
-    example: HIT_POINT_RESULTS_MOCKS.map(result => result[0]),
+    example: Object.values(HIT_DICE_BY_MONSTER)[0],
   }),
 })
 
-export const HitPointsResponseSchema = z.array(z.tuple([
-  z.string().regex(HIT_DICE_REGEX),
-  z.object({
+export const HitPointsResponseItemSchema = z.object({
+  hitDice: z.string().regex(HIT_DICE_REGEX),
+  hitPoints: z.object({
     minimum: z.number(),
     weak: z.number(),
     average: z.number(),
     strong: z.number(),
     maximum: z.number(),
-  }),
-]))
+  })
+})
+
+export const HitPointsResponseSchema = z.array(HitPointsResponseItemSchema)

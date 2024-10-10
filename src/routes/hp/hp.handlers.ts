@@ -1,6 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Context } from 'hono'
-import type { HitPointResults } from 'roll-hit-dice/dist/types'
 import type { Variables } from '../../types'
 import type { GetHitPointsAsCsvRoute, GetHitPointsRoute } from './hp.routes'
 import { hitPointResultsResponseAsCsv } from '../../util/hit-point-results-response-as-csv'
@@ -11,11 +10,7 @@ interface AppBindings {
 }
 
 export const getHitPointsHandler: RouteHandler<GetHitPointsRoute, AppBindings> = (c: Context) => {
-  const response: [string, HitPointResults][] = []
-  processHitDice(c.get('hitDiceExpressions')).forEach((result) => {
-    response.push([result[0], result[1]])
-  })
-  return c.json(response)
+  return c.json(processHitDice(c.get('hitDiceExpressions')))
 }
 
 export const getHitPointsAsCsvHandler: RouteHandler<GetHitPointsAsCsvRoute, AppBindings> = (c: Context) => {

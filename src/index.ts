@@ -34,14 +34,24 @@ app.doc('/doc', {
     'Or maybe you’re using multiple creatures of the same in a battle, and want them to have varying degrees of durability.\n\n'+
     'Or you want to tweak a creature’s Hit Points mid-battle ([Mike Shea at Sly Flourish explains why we might want to do this](https://slyflourish.com/tweaking_monster_hit_points.html)), but don’t feel comfortable choosing a *completely* arbitrary number.\n\n'+
     'These endpoints allow you to submit a Hit Dice expression&hellip;\n\n'+
-    '- `2d8-2` (Skeleton)\n\n'+
+    '- `2d8+6` (Orc)\n\n'+
     '&hellip;or even multiple Hit Dice expressions at once&hellip;\n\n'+
+    '- `2d6` (Goblin)\n\n'+
     '- `2d8-2` (Skeleton)\n\n'+
     '- `2d8+6` (Orc)\n\n'+
     '- `8d10+40` (Gelatinous Cube)\n\n'+
     '- `33d20+330` (Tarrasque)\n\n'+
     '&hellip;and get back an array of Hit Point values.'+
-    'See the documentation of the individual endpoints for more details.'
+    'See the documentation of the individual endpoints for more details.',
+    contact: {
+      name: "Christopher Miles",
+      url: "http://christophermiles.com.au",
+      email: "mail@christophermiles.com.au"
+    },
+    license: {
+      name: 'MIT',
+      url: 'https://opensource.org/license/mit'
+    }
   },
 })
 

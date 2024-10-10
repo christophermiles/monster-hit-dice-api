@@ -17,7 +17,7 @@ export const HitDiceQuerySchema = z.object({
     param: {
       name: 'hd',
       in: 'query',
-      description: 'One or more Hit Dice expressions, eg: `?hd=2d6` or `?hd=2d6&hd=2d8-2&hd=2d8+6&hd=8d10+40&hd=33d20+330`.'
+      description: 'One or more Hit Dice expressions, eg: `?hd=2d8-2` or `?hd=2d8-2&hd=2d8+6&hd=8d10+40&hd=33d20+330` \n\nNote: the application will decode `+` symbols that have been URL-encoded as `%2B`.',
     },
     example: Object.values(HIT_DICE_BY_MONSTER)[0],
   }),

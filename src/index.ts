@@ -1,21 +1,21 @@
+import type { Variables } from './types'
+import { OpenAPIHono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import { logger } from 'hono/logger'
 import errorMiddleware from './middlewares/error'
-import {getHitPointsAsCsvRoute, getHitPointsRoute as getHitPointsRoute} from './routes/hp/hp.routes'
-import {getHitPointsAsCsvHandler, getHitPointsHandler} from './routes/hp/hp.handlers'
-import {OpenAPIHono} from '@hono/zod-openapi'
-import { Variables} from "./types";
-import serveEmojiFavicon from "./middlewares/serve-emoji-favicon";
+import serveEmojiFavicon from './middlewares/serve-emoji-favicon'
+import { getHitPointsAsCsvHandler, getHitPointsHandler } from './routes/hp/hp.handlers'
+import { getHitPointsAsCsvRoute, getHitPointsRoute } from './routes/hp/hp.routes'
 
 const app = new OpenAPIHono<{ Variables: Variables }>({
-  strict: false
+  strict: false,
 })
 
 app.use(logger())
 app.use(serveEmojiFavicon)
 app.use('*', errorMiddleware)
 
-app.get('/', (c) => c.redirect('/reference'))
+app.get('/', c => c.redirect('/reference'))
 
 app.doc('/doc', {
   openapi: '3.0.0',
@@ -59,7 +59,7 @@ app.get('/reference', apiReference({
   spec: {
     url: '/doc',
   },
-  theme: 'mars'
+  theme: 'mars',
 }))
 
 app.openapi(getHitPointsRoute, getHitPointsHandler)

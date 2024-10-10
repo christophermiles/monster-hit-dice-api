@@ -40,7 +40,7 @@ app.doc('/doc', {
             + '- `2d8+6` (Orc)\n\n'
             + '- `8d10+40` (Gelatinous Cube)\n\n'
             + '- `33d20+330` (Tarrasque)\n\n'
-            + '&hellip;and get back an array of Hit Point values.'
+            + '&hellip;and get back an array of Hit Point values.\n\n'
             + 'See the documentation of the individual endpoints for more details.',
   },
 })

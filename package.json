@@ -2,6 +2,8 @@
   "name": "hit-dice-app-api",
   "type": "module",
   "version": "1.0.0",
+  "description": "A microservice for calculating a range of Hit Point values from Dungeons & Dragons Hit Dice expressions",
+  "author": "Christopher Miles <mail@christophermiles.com.au> (http://christophermiles.com.au)",
   "license": "MIT",
   "scripts": {
     "dev": "wrangler dev",

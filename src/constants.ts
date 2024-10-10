@@ -7,3 +7,5 @@ export const HIT_DICE_REGEX = /^(\d+)d(\d+)([+-]\d+)?$/
     (\d+): Captures one or more digits after the d, representing the dieType.
     ([+-]\d+)?: Optionally captures a + or - followed by one or more digits, representing the modifier. This part is optional, indicated by the ? at the end.
 */
+
+export const CSV_RESPONSE_HEADER_ROW = 'Hit Dice,Minimum,Weak,Average,Strong,Maximum'

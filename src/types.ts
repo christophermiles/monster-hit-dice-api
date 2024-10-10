@@ -1,7 +1,21 @@
 import type { HitPointResults } from 'roll-hit-dice/dist/types'
-import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
+import { RouteConfig, RouteHandler, z} from "@hono/zod-openapi";
 
-export type HitPointResultsResponse = [string, HitPointResults][]
+export type HitPointResultsResponseItem = {
+    hitDice: string
+    hitPoints: HitPointResults
+}
+
+export type HitPointResultsResponse = HitPointResultsResponseItem[]
+
+export type HitPointByMonsterNameResultsResponseItem = HitPointResultsResponseItem & {
+    monster: {
+        name: string
+        source: string
+    }
+}
+
+export type HitPointByMonsterNameResultsResponse = HitPointByMonsterNameResultsResponseItem[]
 
 export interface Variables {
     hitDiceExpressions: string[]

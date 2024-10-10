@@ -20,8 +20,8 @@ export const getHitPointsRoute = createRoute({
                 'application/json': {
                     schema: HitPointsResponseSchema,
                     examples: {
-                        ['Single query (Skeleton)']: HIT_POINT_RESULTS_MOCKS[0],
-                        ['Multiple queries (Skeleton, Orc, Gelatinous Cube, Tarrasque']: HIT_POINT_RESULTS_MOCKS
+                        ['Single query (Goblin)']: HIT_POINT_RESULTS_MOCKS[0],
+                        ['Multiple queries (Goblin, Skeleton, Orc, Gelatinous Cube, Tarrasque']: HIT_POINT_RESULTS_MOCKS
                     }
                 },
             },
@@ -30,6 +30,7 @@ export const getHitPointsRoute = createRoute({
     },
 })
 
+// @ts-ignore
 export const getHitPointsAsCsvRoute = createRoute({
     method: 'get',
     path: '/hp/csv',
@@ -43,7 +44,7 @@ export const getHitPointsAsCsvRoute = createRoute({
             content: {
                 'text/plain': {
                     schema: z.string(),
-                    example: hitPointResultsResponseAsCsv(HIT_POINT_RESULTS_MOCKS)
+                    example: hitPointResultsResponseAsCsv([HIT_POINT_RESULTS_MOCKS[0]]),
                 },
             },
             description: 'Retrieve Hit Point results from Hit Dice expressions as comma-separated values',

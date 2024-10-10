@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 import { HIT_DICE_REGEX } from './constants'
-import { HIT_POINT_RESULTS_MOCKS} from "./mocks";
+import {HIT_DICE_BY_MONSTER, HIT_POINT_RESULTS_MOCKS} from "./mocks";
 
 export const HitDiceQuerySchema = z.object({
   hd: z.preprocess((arg) => {
@@ -19,7 +19,7 @@ export const HitDiceQuerySchema = z.object({
       in: 'query',
       description: 'One or more Hit Dice expressions, eg: `?hd=2d6` or `?hd=2d6&hd=2d8-2&hd=2d8+6&hd=8d10+40&hd=33d20+330`.'
     },
-    example: HIT_POINT_RESULTS_MOCKS,
+    example: Object.values(HIT_DICE_BY_MONSTER)[0],
   }),
 })
 

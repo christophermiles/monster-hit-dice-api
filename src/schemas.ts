@@ -1,6 +1,6 @@
 import { z } from '@hono/zod-openapi'
 import { HIT_DICE_REGEX } from './constants'
-import {HIT_DICE_BY_MONSTER, HIT_POINT_RESULTS_MOCKS} from "./mocks";
+import { HIT_DICE_BY_MONSTER } from './mocks'
 
 export const HitDiceQuerySchema = z.object({
   hd: z.preprocess((arg) => {
@@ -31,7 +31,7 @@ export const HitPointsResponseItemSchema = z.object({
     average: z.number(),
     strong: z.number(),
     maximum: z.number(),
-  })
+  }),
 })
 
 export const HitPointsResponseSchema = z.array(HitPointsResponseItemSchema)

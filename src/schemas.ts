@@ -36,3 +36,8 @@ export const HitPointsResponseItemSchema = z.object({
 })
 
 export const HitPointsResponseSchema = z.array(HitPointsResponseItemSchema)
+
+export const ErrorResponseSchema = z.object({
+  message: z.string(),
+  status: z.number().int(),
+})

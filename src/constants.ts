@@ -1,5 +1,4 @@
-export const HIT_DICE_REGEX = /^(\d+)d(\d+)([+-]\d+)?$/
-
+import { HIT_DICE_BY_MONSTER } from './mocks'
 /*
     ^ and $: Ensures that the entire string matches the format from start to end.
     (\d+): Captures one or more digits before the d, representing the diceCount.

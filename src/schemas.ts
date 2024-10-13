@@ -1,5 +1,6 @@
 import { z } from '@hono/zod-openapi'
-import { HIT_DICE_REGEX } from './constants'
+import { HIT_DICE_REGEX } from 'roll-hit-dice'
+import { INVALID_HIT_DICE_ERROR_MESSAGE } from './constants'
 import { HIT_DICE_BY_MONSTER } from './mocks'
 
 export const HitDiceQuerySchema = z.object({
@@ -13,7 +14,7 @@ export const HitDiceQuerySchema = z.object({
     }
 
     return arg
-  }, z.array(z.string().regex(HIT_DICE_REGEX))).openapi({
+  }, z.array(z.string().regex(HIT_DICE_REGEX, INVALID_HIT_DICE_ERROR_MESSAGE))).openapi({
     param: {
       name: 'hd',
       in: 'query',

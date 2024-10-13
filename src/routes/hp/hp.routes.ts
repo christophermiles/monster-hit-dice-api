@@ -1,10 +1,24 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { INVALID_HIT_DICE_ERROR_MESSAGE } from '../../constants'
 import setHitDiceExpressionsFromQueryMiddleware from '../../middlewares/set-hit-dice-expressions-from-query'
 import { HIT_POINT_RESULTS_MOCKS } from '../../mocks'
-import { HitDiceQuerySchema, HitPointsResponseSchema } from '../../schemas'
+import { ErrorResponseSchema, HitDiceQuerySchema, HitPointsResponseSchema } from '../../schemas'
 import { hitPointResultsResponseAsCsv } from '../../util/hit-point-results-response-as-csv'
 
 const tags = ['Hit Points']
+
+const ERROR_400 = {
+  content: {
+    'application/json': {
+      schema: ErrorResponseSchema,
+      example: {
+        message: INVALID_HIT_DICE_ERROR_MESSAGE,
+        status: 400,
+      },
+    },
+  },
+  description: 'Bad request',
+}
 
 export const getHitPointsRoute = createRoute({
   method: 'get',
@@ -13,7 +27,9 @@ export const getHitPointsRoute = createRoute({
   request: {
     query: HitDiceQuerySchema,
   },
-  middleware: setHitDiceExpressionsFromQueryMiddleware,
+  middleware: [
+    setHitDiceExpressionsFromQueryMiddleware,
+  ],
   responses: {
     200: {
       content: {
@@ -27,6 +43,7 @@ export const getHitPointsRoute = createRoute({
       },
       description: 'Retrieve Hit Point results from Hit Dice expressions',
     },
+    400: ERROR_400,
   },
 })
 
@@ -48,6 +65,7 @@ export const getHitPointsAsCsvRoute = createRoute({
       },
       description: 'Retrieve Hit Point results from Hit Dice expressions as comma-separated values',
     },
+    400: ERROR_400,
   },
 })
 

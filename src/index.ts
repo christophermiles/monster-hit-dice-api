@@ -1,23 +1,52 @@
+import type { Context } from 'hono'
 import type { Variables } from './types'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
+import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import errorMiddleware from './middlewares/error'
 import serveEmojiFavicon from './middlewares/serve-emoji-favicon'
 import { getHitPointsAsCsvHandler, getHitPointsHandler } from './routes/hp/hp.handlers'
 import { getHitPointsAsCsvRoute, getHitPointsRoute } from './routes/hp/hp.routes'
+import formatZodErrors from './util/format-zod-errors'
 
 const app = new OpenAPIHono<{ Variables: Variables }>({
   strict: false,
+  defaultHook: (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          message: formatZodErrors(result.error).message,
+          status: 400,
+        },
+        400,
+      )
+    }
+  },
 })
 
 app.use(logger())
 app.use(serveEmojiFavicon)
 app.use('*', errorMiddleware)
 
+app.onError((error: Error | HTTPException, c: Context) => {
+  if (error instanceof HTTPException) {
+    const { message, status } = error
+
 app.get('/', c => c.redirect('/reference'))
+    return c.json({
+      message,
+      status,
+    }, error.status)
+  }
 
 app.doc('/doc', {
+  return c.json({
+    message: error.message || 'Internal Server Error',
+    status: 500,
+  }, 500)
+})
+
   openapi: '3.0.0',
   info: {
     version: '1.0.0',

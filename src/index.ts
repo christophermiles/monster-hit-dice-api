@@ -4,7 +4,6 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { apiReference } from '@scalar/hono-api-reference'
 import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
-import errorMiddleware from './middlewares/error'
 import serveEmojiFavicon from './middlewares/serve-emoji-favicon'
 import { getHitPointsAsCsvHandler, getHitPointsHandler } from './routes/hp/hp.handlers'
 import { getHitPointsAsCsvRoute, getHitPointsRoute } from './routes/hp/hp.routes'
@@ -27,7 +26,6 @@ const app = new OpenAPIHono<{ Variables: Variables }>({
 
 app.use(logger())
 app.use(serveEmojiFavicon)
-app.use('*', errorMiddleware)
 
 app.onError((error: Error | HTTPException, c: Context) => {
   if (error instanceof HTTPException) {

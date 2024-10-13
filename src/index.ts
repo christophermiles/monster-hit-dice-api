@@ -44,17 +44,7 @@ app.onError((error: Error | HTTPException, c: Context) => {
 })
 
 app.get('/', (c) => {
-  return c.json({
-    message: 'Welcome to the Hit Dice App API',
-    routes: [
-      '/hp',
-      '/hp/csv',
-    ],
-    documentation: {
-      open_api_schema: '/schema',
-      interactive_docs: '/reference',
-    },
-  })
+  return c.redirect('/docs')
 })
 
 app.doc('/schema', {
@@ -75,7 +65,7 @@ app.doc('/schema', {
   },
 })
 
-app.get('/reference', apiReference({
+app.get('/docs', apiReference({
   spec: {
     url: '/schema',
   },

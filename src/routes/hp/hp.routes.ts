@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { INVALID_HIT_DICE_ERROR_MESSAGE } from '../../constants'
+import { INVALID_HIT_DICE_ERROR_MESSAGE, NO_HIT_DICE_MESSAGE } from '../../constants'
 import setHitDiceExpressionsFromQueryMiddleware from '../../middlewares/set-hit-dice-expressions-from-query'
 import { HIT_POINT_RESULTS_MOCKS } from '../../mocks'
 import { ErrorResponseSchema, HitDiceQuerySchema, HitPointsResponseSchema } from '../../schemas'
@@ -11,9 +11,15 @@ const ERROR_400 = {
   content: {
     'application/json': {
       schema: ErrorResponseSchema,
-      example: {
-        message: INVALID_HIT_DICE_ERROR_MESSAGE,
-        status: 400,
+      examples: {
+        'No Hit Dice': {
+          message: NO_HIT_DICE_MESSAGE,
+          status: 400,
+        },
+        'Invalid Hit Dice': {
+          message: INVALID_HIT_DICE_ERROR_MESSAGE,
+          status: 400,
+        },
       },
     },
   },

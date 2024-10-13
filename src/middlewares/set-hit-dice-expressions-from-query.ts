@@ -1,10 +1,11 @@
 import { createMiddleware } from 'hono/factory'
+import { BadRequestError } from '../classes/errors'
 
 export default createMiddleware(async (c, next) => {
   const hds = c.req.queries('hd')
 
   if (!hds?.length) {
-    throw new TypeError('🎲 No Hit Dice expression was provided')
+    throw new BadRequestError('🎲 No Hit Dice expression was provided')
   }
 
   c.set('hitDiceExpressions', hds.map((queryString: string) => {

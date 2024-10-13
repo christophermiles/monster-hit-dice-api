@@ -31,20 +31,33 @@ app.onError((error: Error | HTTPException, c: Context) => {
   if (error instanceof HTTPException) {
     const { message, status } = error
 
-app.get('/', c => c.redirect('/reference'))
     return c.json({
       message,
       status,
     }, error.status)
   }
 
-app.doc('/doc', {
   return c.json({
     message: error.message || 'Internal Server Error',
     status: 500,
   }, 500)
 })
 
+app.get('/', (c) => {
+  return c.json({
+    message: 'Welcome to the Hit Dice App API',
+    routes: [
+      '/hp',
+      '/hp/csv',
+    ],
+    documentation: {
+      open_api_schema: '/schema',
+      interactive_docs: '/reference',
+    },
+  })
+})
+
+app.doc('/schema', {
   openapi: '3.0.0',
   info: {
     version: '1.0.0',
@@ -64,7 +77,7 @@ app.doc('/doc', {
 
 app.get('/reference', apiReference({
   spec: {
-    url: '/doc',
+    url: '/schema',
   },
   theme: 'mars',
 }))

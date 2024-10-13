@@ -9,4 +9,4 @@ import { HIT_DICE_BY_MONSTER } from './mocks'
 
 export const CSV_RESPONSE_HEADER_ROW = 'Hit Dice,Minimum,Weak,Average,Strong,Maximum'
 
-export const INVALID_HIT_DICE_ERROR_MESSAGE = `hd must be a valid Hit Dice expression such as ${Object.values(HIT_DICE_BY_MONSTER).map(hd => hd).join(', ')}`
+export const INVALID_HIT_DICE_ERROR_MESSAGE = `🎲 hd must be a valid Hit Dice expression such as ${Object.values(HIT_DICE_BY_MONSTER).map(hd => hd).join(', ')}`

@@ -1,5 +1,5 @@
 {
-  "name": "hit-dice-app-api",
+  "name": "monster-hit-dice-api",
   "type": "module",
   "version": "1.0.0",
   "description": "A microservice for calculating a range of Hit Point values from Dungeons & Dragons Hit Dice expressions",
